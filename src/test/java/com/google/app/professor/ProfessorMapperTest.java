@@ -13,6 +13,13 @@ class ProfessorMapperTest {
 	private ProfessorMapper professorMapper;
 	
 	@Test
+	void getCount() throws Exception {
+		Long result = professorMapper.getCount();
+		System.out.println(result);
+		assertNotEquals(0, result);
+	}
+	
+	@Test
 	void testList() {
 //		fail("Not yet implemented");
 	}

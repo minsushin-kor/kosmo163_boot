@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.app.departments.DepartmentDTO;
+import com.google.app.pages.Pager;
 
 @Controller
 @RequestMapping("/professor/*")
@@ -19,8 +20,8 @@ public class ProfessorController {
 	private ProfessorService professorService;
 	
 	@GetMapping("list")
-	public String list(Model model) throws Exception {
-		List<ProfessorDTO> ar = professorService.list();
+	public String list(Pager pager, Model model) throws Exception {
+		List<ProfessorDTO> ar = professorService.list(pager);
 		model.addAttribute("list", ar);
 		return "professor/list";
 	}

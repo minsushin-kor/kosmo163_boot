@@ -25,48 +25,64 @@
 				<div class="container-fluid">
 
 					<!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">교수 명단 Page</h1>
-                    
-                    <!-- 테이블 DIV 시작 -->
-                    <div class="row justify-content-center">
-                    <div class="col-6">
-                    	<table class="table">
-                    		<thead class="thead-dark">
-                    			<tr>
-                    				<th scope="col">교수 번호</th>
-                    				<th scope="col">교수 이름</th>
-                    				<th scope="col">담당 학과번호</th>
-                    			</tr>
-                    		</thead>
-                    		<tbody>
-		                    	<c:forEach items="${list}" var="d">
-		                    		<tr>
-		                    			<td><a href="./detail?professorNo=${d.professorNo}">${d.professorNo}</a></td>
-		                    			<td>${d.professorName}</td>	                    			
-		                    			<td>${d.departmentNo}</td>
-		                    	
-		                    		</tr>
-		                    	</c:forEach>
-                    		</tbody>
-                    	</table>
-                    	
-                    	<div>
-                    		<a href="./create">교수 등록</a>
-                    	</div>
-                    
-                    </div>
-                    </div>
-                    <!-- 테이블 DIV 끝 -->
+					<h1 class="h3 mb-4 text-gray-800">교수 명단 Page</h1>
 
-                </div>
-                <!-- End Page container-fluid -->
+					<!-- 테이블 DIV 시작 -->
+					<div class="row justify-content-center">
+						<div class="col-6">
+							<table class="table">
+								<thead class="thead-dark">
+									<tr>
+										<th scope="col">교수 번호</th>
+										<th scope="col">교수 이름</th>
+										<th scope="col">담당 학과번호</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach items="${list}" var="d">
+										<tr>
+											<td><a href="./detail?professorNo=${d.professorNo}">${d.professorNo}</a></td>
+											<td>${d.professorName}</td>
+											<td>${d.departmentNo}</td>
+
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+
+							<div>
+								<nav aria-label="Page navigation example">
+									<ul class="pagination">
+										<li class="page-item ${pager.pre?'':'disabled'}"><a class="page-link" href="./list?page=${pager.pre?pager.start-1:pager.start}"
+											aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+										</a></li>
+										<c:forEach begin="${pager.start}" end="${pager.end}" var="i">
+											<li class="page-item"><a class="page-link" href="./list?page=${i}">${i}</a></li>
+										</c:forEach>
+										<li class="page-item ${pager.next?'':'disabled'}"><a class="page-link" href="./list?page=${pager.next?pager.end+1:pager.end}"
+											aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+										</a></li>
+									</ul>
+								</nav>
+							</div>
+
+							<div>
+								<a href="./create">교수 등록</a>
+							</div>
+
+						</div>
+					</div>
+					<!-- 테이블 DIV 끝 -->
+
 				</div>
 				<!-- End Page container-fluid -->
 			</div>
-			<!-- End Page Content -->
-			<c:import url="/WEB-INF/views/temp/footer.jsp"></c:import>
+			<!-- End Page container-fluid -->
 		</div>
-		<!-- End Content-Wrapper -->
+		<!-- End Page Content -->
+		<c:import url="/WEB-INF/views/temp/footer.jsp"></c:import>
+	</div>
+	<!-- End Content-Wrapper -->
 	</div>
 	<!-- End Wrapper -->
 

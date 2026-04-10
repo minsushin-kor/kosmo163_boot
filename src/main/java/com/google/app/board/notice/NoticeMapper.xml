@@ -5,13 +5,18 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.google.app.board.notice.NoticeMapper">
+	<select id="getCount" resultType="Long">
+		SELECT COUNT(BOARD_NUM) FROM TB_NOTICE
+	</select>
+
 	<!-- list -->
-	<select id="list" resultType="NoticeDTO">
+	<select id="list" resultType="NoticeDTO" parameterType="Pager">
 	<![CDATA[
-		SELECT * FROM TB_NOTICE
-		WHERE BOARD_NUM > (SELECT MAX(BOARD_NUM)-10 FROM TB_NOTICE)
-		AND BOARD_NUM <= (SELECT MAX(BOARD_NUM) FROM TB_NOTICE)
-		ORDER BY BOARD_NUM DESC
+		SELECT * FROM
+		(SELECT ROWNUM R, T.* FROM
+			(SELECT * FROM TB_NOTICE ORDER BY BOARD_NUM DESC) T
+		)
+		WHERE R BETWEEN #{first} AND #{last}
 		]]>
 	</select>
 
