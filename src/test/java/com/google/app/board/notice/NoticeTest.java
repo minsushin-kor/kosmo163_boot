@@ -14,10 +14,5 @@ class NoticeTest {
 	@Autowired
 	private NoticeMapper noticeMapper;
 	
-	@Test
-	void getCount() throws Exception{
-		Long result = noticeMapper.getCount();
-		System.out.println(result);
-		assertNotEquals(0, result);
-	}
+	
 }

@@ -12,20 +12,20 @@ import com.google.app.pages.Pager;
 @Service
 public class NoticeService {
 	
+
 	@Autowired
 	private NoticeMapper noticeMapper;
 	
-	public List<NoticeDTO> list(Pager pager) throws Exception {
-			
-		pager.makePageNumber(noticeMapper.getCount());
-								
+	public List<NoticeDTO> list(Pager pager)throws Exception{
+		
+		pager.makePageNumber(noticeMapper.getCount(pager));
+		
+		
+		
 		return noticeMapper.list(pager);
 	}
 	
-	// notice 페이지 목록 만들기 위해 make 메서드 선언
-	// 중복사용되고 있어서 pager 클래스에 선언 후 삭제
-	
-	public int create(NoticeDTO noticeDTO) throws Exception {
+	public int create(NoticeDTO noticeDTO)throws Exception{
 		return noticeMapper.create(noticeDTO);
 	}
 	

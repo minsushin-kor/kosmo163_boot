@@ -9,22 +9,22 @@ import com.google.app.pages.Pager;
 
 @Mapper
 public interface NoticeMapper {
-	// count
-	public Long getCount() throws Exception;
+	public Long getCount(Pager pager)throws Exception;
 	
-	// list
-	public List<NoticeDTO> list(Pager pager) throws Exception;
+	//list
+	public List<NoticeDTO> list(Pager pager)throws Exception;
 	
-	// detail
-	public NoticeDTO detail(NoticeDTO noticeDTO) throws Exception;
+	//detail
+	public NoticeDTO detail(NoticeDTO noticeDTO)throws Exception;
 	
-	// create
-	public int create(NoticeDTO noticeDTO) throws Exception;
-		
-	// update
-	public int update(NoticeDTO noticeDTO) throws Exception;
+	//create
+	public int create(NoticeDTO noticeDTO)throws Exception;
 	
-	// delete
-	public int delete(NoticeDTO noticeDTO) throws Exception;
+	//update
+	public int update(NoticeDTO noticeDTO)throws Exception;
+	
+	//delete
+	public int delete(NoticeDTO noticeDTO)throws Exception;
+
 	
 }
