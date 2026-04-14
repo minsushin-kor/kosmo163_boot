@@ -9,6 +9,9 @@ import com.google.app.pages.Pager;
 
 @Mapper
 public interface NoticeMapper {
+	
+	public int createFile(NoticeFileDTO noticeFileDTO) throws Exception;
+	
 	public Long getCount(Pager pager)throws Exception;
 	
 	//list

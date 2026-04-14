@@ -5,7 +5,14 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.google.app.board.notice.NoticeMapper">
-	
+	<!-- File 시작 -->
+	<insert id="createFile" parameterType="NoticeFileDTO">
+		
+		INSERT INTO TB_NOTICEFILE 
+		VALUES (BOARD_SEQ.NEXTVAL, #{fileName}, #{oriName}, #{boardNum})
+	</insert>
+	<!-- File 끝 -->
+  	
   	<sql id="search">
   		WHERE 
 		<choose>
@@ -17,11 +24,37 @@
   		LIKE '%'||#{search}||'%'
   	</sql>
   
-  	<select id="detail" parameterType="NoticeDTO" resultType="NoticeDTO">
-  		SELECT * FROM TB_NOTICE
-  		WHERE BOARD_NUM=#{boardNum}
-  	</select>
+  	<resultMap type="NoticeDTO" id="detailResult">
+  		<!-- ID : Primary Key 입력 -->
+  		<!-- column : pk의 컬럼명 property : 위에 선언한 DTO의 setter이름 -->
+  		<id column="BOARD_NUM" property="boardNum"/>
+  		
+  		<!-- 그외 나머지 -->
+  		<result column="BOARD_TITLE" property="boardTitle"/>
+  		<result column="BOARD_WRITER" property="boardWriter"/>
+  		<result column="BOARD_CONTENTS" property="boardContents"/>
+  		<result column="BOARD_DATE" property="boardDate"/>
+  		<result column="BOARD_HIT" property="boardHit"/>
+  		
+  		<!-- 1:N의 관계 - collection태그 -->
+  		<collection property="list" javaType="java.util.List" ofType="NoticeFileDTO">
+  			<id column="FILE_NUM" property="fileNum"/>
+  			<result column="FILE_NAME" property="fileName"/>
+  			<result column="ORI_NAME" property="oriName"/>  			
+  		</collection>
+  		
+  		<!-- 1:1의 관계 : association사용(collection과 문법은 동일하여 참고하여 사용 가능) -->
+  		<!-- 복합적인 관계일 경우 1:1을 먼저 작성하고 1:N을 작성해야 오류가 발생하지 않음 -->
   	
+  	</resultMap>
+  	
+  	<select id="detail" parameterType="NoticeDTO" resultMap="detailResult">
+  		SELECT * FROM TB_NOTICE N
+		LEFT OUTER JOIN TB_NOTICEFILE NF 
+		ON N.BOARD_NUM = NF.BOARD_NUM 
+		WHERE N.BOARD_NUM = #{boardNum}
+  	</select>
+  	  	
   	<select id="getCount" resultType="Long" parameterType="Pager">
   		SELECT COUNT(BOARD_NUM) FROM TB_NOTICE
   		<include refid="search"></include>
@@ -45,8 +78,11 @@
 
     <!-- create -->	
     <insert id="create" parameterType="NoticeDTO">
+    	<selectKey order="BEFORE" resultType="Long" keyProperty="boardNum">
+			SELECT BOARD_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
     	INSERT INTO TB_NOTICE 
-    	VALUES (BOARD_SEQ.NEXTVAL, #{boardTitle}, #{boardContents}, #{boardWriter}, sysdate, 0)
+    	VALUES (#{boardNum}, #{boardTitle}, #{boardContents}, #{boardWriter}, sysdate, 0)
     </insert>
 
 </mapper>
