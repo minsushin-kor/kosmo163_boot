@@ -42,6 +42,7 @@
                     </div>
 					
 					<div>
+						<a class="btn btn-primary" href="./reply?boardNum=${dto.boardNum}">답글 작성</a>
 						<a class="btn btn-primary" href="./update?boardNum=${dto.boardNum}">내용 수정</a>
 						<form action="./delete" method="post">
 							<input type="hidden" name="boardNum" value="${dto.boardNum}">

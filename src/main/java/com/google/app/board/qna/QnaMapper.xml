@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.google.app.board.qna.QnaMapper">
+	
+	<insert id="createFile" parameterType="QnaFileDTO">
+		
+		INSERT INTO TB_QNAFILE 
+		VALUES (BOARD_SEQ.NEXTVAL, #{fileName}, #{oriName}, #{boardNum})
+	</insert>
+	
+	<insert id="create" parameterType="QnaDTO">
+		<selectKey order="BEFORE" resultType="Long" keyProperty="boardNum">
+			SELECT BOARD_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+	    INSERT INTO TB_QNA (
+    	    BOARD_NUM, BOARD_TITLE, BOARD_CONTENTS, BOARD_WRITER, 
+        	BOARD_DATE, BOARD_HIT, BOARD_REF, BOARD_STEP, BOARD_DEPTH
+    		) 
+    		VALUES (
+	        	#{boardNum}, #{boardTitle}, #{boardContents}, #{boardWriter}, 
+    	    	SYSDATE, 0, 
+    	    	<if test="boardRef != null ">#{boardRef}</if>
+    	    	<if test="boardRef == null">#{boardNum}</if>, 
+    	    	#{boardStep}, #{boardDepth}
+    		)
+	</insert>
+	
+	<update id="replyUpdate" parameterType="QnaDTO">
+		UPDATE TB_QNA SET BOARD_STEP=BOARD_STEP+1
+		WHERE BOARD_REF=#{boardRef} AND BOARD_STEP > #{boardStep} 
+	</update>
+
+	<sql id="search">
+  		WHERE 
+		<choose>
+			<when test="kind=='v2'">BOARD_CONTENTS</when>
+			<when test="kind=='v3'">BOARD_WRITER</when>
+			<otherwise>BOARD_TITLE</otherwise>
+		</choose>
+  		
+  		LIKE '%'||#{search}||'%'
+  	</sql>
+	
+  	<select id="getCount" resultType="Long" parameterType="Pager">
+  		SELECT COUNT(BOARD_NUM) FROM TB_QNA
+  		<include refid="search"></include>
+  	</select>
+  	
+	<!-- list 조회 --> 
+	<select id="list" resultType="QnaDTO" parameterType="QnaDTO">
+		SELECT * FROM
+				(
+					SELECT ROWNUM R, T.* FROM
+					(
+						SELECT * FROM TB_QNA
+						<include refid="search"></include>
+						ORDER BY BOARD_REF DESC,
+						BOARD_STEP ASC
+					) T
+				)
+			WHERE R BETWEEN #{first} AND #{last}
+	</select>
+	
+	<resultMap type="QnaDTO" id="detailResult">
+  		<!-- ID : Primary Key 입력 -->
+  		<!-- column : pk의 컬럼명 property : 위에 선언한 DTO의 setter이름 -->
+  		<id column="BOARD_NUM" property="boardNum"/>
+  		
+  		<!-- 그외 나머지 -->
+  		<result column="BOARD_TITLE" property="boardTitle"/>
+  		<result column="BOARD_WRITER" property="boardWriter"/>
+  		<result column="BOARD_CONTENTS" property="boardContents"/>
+  		<result column="BOARD_DATE" property="boardDate"/>
+  		<result column="BOARD_HIT" property="boardHit"/>
+  		<result column="BOARD_REF" property="boardRef"/>
+  		<result column="BOARD_STEP" property="boardStep"/>
+  		<result column="BOARD_DEPTH" property="boardDepth"/>
+  		
+  		<!-- 1:N의 관계 - collection태그 -->
+  		<collection property="list" javaType="java.util.List" ofType="QnaFileDTO">
+  			<id column="FILE_NUM" property="fileNum"/>
+  			<result column="FILE_NAME" property="fileName"/>
+  			<result column="ORI_NAME" property="oriName"/>  			
+  		</collection>
+  		
+  		<!-- 1:1의 관계 : association사용(collection과 문법은 동일하여 참고하여 사용 가능) -->
+  		<!-- 복합적인 관계일 경우 1:1을 먼저 작성하고 1:N을 작성해야 오류가 발생하지 않음 -->
+  	
+  	</resultMap>
+	
+	<select id="detail" resultType="QnaDTO" resultMap="detailResult">
+		SELECT * FROM TB_QNA q
+		LEFT OUTER JOIN TB_QNAFILE qf 
+		ON q.BOARD_NUM = qf.BOARD_NUM 
+		WHERE q.BOARD_NUM = #{boardNum}
+	</select>
+	
+
+</mapper>
